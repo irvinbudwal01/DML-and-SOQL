@@ -11,11 +11,18 @@
 
 System.debug('*********ANSWER IS BELOW*********');
 
-System.debug(DataLord.NumAccounts());
-System.debug(DataLord.NumHot());
-System.debug(DataLord.NumComplex());
-System.debug(DataLord.BigFive());
-System.debug(DataLord.LastBigOpportunity());
-System.debug(DataLord.MajorPlayers());
-System.debug(DataLord.MostPopularAccount());
+//SOQL Problems
+
+// System.debug(DataLord.NumAccounts());
+// System.debug(DataLord.NumHot());
+// System.debug(DataLord.NumComplex());
+// System.debug(DataLord.BigFive());
+// System.debug(DataLord.LastBigOpportunity());
+// System.debug(DataLord.MajorPlayers());
+// System.debug(DataLord.MostPopularAccount());
 System.debug(DataLord.LeadSources());
+
+//SOSL Problems
+// System.debug(DataLord.getAllContactsAndLeads());
+// System.debug(DataLord.getAccountsWithAO());
+// System.debug(DataLord.get1000());
