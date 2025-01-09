@@ -20,9 +20,16 @@ System.debug('*********ANSWER IS BELOW*********');
 // System.debug(DataLord.LastBigOpportunity());
 // System.debug(DataLord.MajorPlayers());
 // System.debug(DataLord.MostPopularAccount());
-System.debug(DataLord.LeadSources());
+// System.debug(DataLord.LeadSources());
 
 //SOSL Problems
+
 // System.debug(DataLord.getAllContactsAndLeads());
 // System.debug(DataLord.getAccountsWithAO());
 // System.debug(DataLord.get1000());
+
+//DML Problems
+
+// DataLord.SpawnContacts();
+// System.debug(DataLord.CreateHomes());
+// DataLord.Relocate();
