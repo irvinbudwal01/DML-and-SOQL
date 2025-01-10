@@ -31,5 +31,7 @@ System.debug('*********ANSWER IS BELOW*********');
 //DML Problems
 
 // DataLord.SpawnContacts();
-// System.debug(DataLord.CreateHomes());
+// DataLord.CreateHomes();
 // DataLord.Relocate();
+// DataLord.AssignHomes();
+DataLord.play();

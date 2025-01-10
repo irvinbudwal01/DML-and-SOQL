@@ -14,7 +14,7 @@ public with sharing class DataLord {
     }
 
     public static Integer NumComplex() {
-        return [SELECT COUNT() FROM Account WHERE Name LIKE '*&*'];
+        return [SELECT COUNT() FROM Account WHERE Name LIKE '%&%'];
     }
 
     public static List<Account> BigFive() {
@@ -53,26 +53,53 @@ public with sharing class DataLord {
 
     //DML Problems
 
-    public static void SpawnContacts() {
+    public static void SpawnContacts() { //Certain matching rules preventing certain entries even though names are unique.
         List<Contact> conList = new List<Contact>();
 
-        for(Integer i = 0; i < 200; i++) {
+        List<Contact> currentList = [SELECT FirstName, LastName FROM Contact];
+
+        Integer targetSize = currentList.size() + 200;
+
+        for(Integer i = 0; conList.size() < 200; i++) {
+            Boolean unique = true;
             String Name = 'Temp' + i;
             String LName = 'TempL' + i;
-            Contact con = new Contact(FirstName=Name, LastName=LName);
-            conList.add(con);
+            for(Integer j = 0; j < currentList.size(); j++) {
+                if(Name.equals(currentList[j].FirstName) || LName.equals(currentList[j].LastName)) {
+                    unique = false;
+                    break;
+                }
+            }
+            if(unique) {
+                Contact con = new Contact(FirstName=Name, LastName=LName);
+                conList.add(con);
+            }
         }
-
         Database.insert(conList);
     }
 
     public static void CreateHomes() {
         List<Account> accList = new List<Account>();
 
-        for(Integer i = 0; i < 3; i++) {
+        List<Account> currentList = [SELECT Name FROM Account];
+
+        Integer targetSize = currentList.size() + 3;
+
+        for(Integer i = 0; accList.size() < 3; i++) {
+            Boolean unique = true;
             Account acc = new Account();
             acc.Name = 'Temp' + i;
-            accList.add(acc);
+            for(Integer j = 0; j < currentList.size(); j++) {
+                // System.debug(acc.Name + ' = ' + currentList[j].Name);
+                // System.debug(acc.Name.equals(currentList[j].Name));
+                if(acc.Name.equals(currentList[j].Name)) {
+                    unique = false;
+                    break;
+                }
+            }
+            if(unique) {
+                accList.add(acc);
+            }
         }
 
         Database.insert(accList);
@@ -87,5 +114,41 @@ public with sharing class DataLord {
         Database.delete(conList);
     }
 
+    public static void AssignHomes() {
+        List<Contact> conList = [SELECT Name, Id FROM Contact WHERE Name LIKE 'Temp%'];
+
+        List<Account> accList = [SELECT Name, Id FROM Account WHERE Name LIKE 'Temp%'];
+        for(Integer i = 0; i < conList.size(); i++) {
+            Double rand = math.random();
+            if(rand <= .33) {
+                conList[i].AccountId = accList[0].Id;
+            }
+            if(rand > .33 && rand < .67) {
+                conList[i].AccountId = accList[1].Id;
+            }
+            if(rand >= .67) {
+                conList[i].AccountId = accList[2].Id;
+            }
+        }
+        update conList;
+    }
+
+    public static void Play() {
+        SavePoint sp1 = Database.setSavepoint();
+
+        System.debug('Number of Accounts before DML: ' + [SELECT COUNT(Id) FROM Account]);
+        System.debug('Number of Contacts before DML: ' + [SELECT COUNT(Id) FROM Contact]);
+
+        SpawnContacts();
+        CreateHomes();
+        Relocate();
+        AssignHomes();
+
+        System.debug('Number of Accounts after DML: ' + [SELECT COUNT(Id) FROM Account]);
+        System.debug('Number of Contacts after DML: ' + [SELECT COUNT(Id) FROM Contact]);
+        System.debug([SELECT Contact.Account.Name, Count(Id) FROM Contact GROUP BY Contact.Account.Name ORDER BY Count(Id) DESC NULLS LAST]);
+
+        Database.rollback(sp1);
+    }
     
 }
